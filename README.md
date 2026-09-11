@@ -1,16 +1,45 @@
 # StreamML
 
-**My transaction analytics and MLOps portfolio project — Ali Adil.**
+**My project for understanding transactions and testing a prediction model — Ali Adil.**
 
 [Open the verified portfolio preview](https://aliadiill.github.io/streamml/) · [Successful Pages deployment](https://github.com/aliadiill/streamml/actions/runs/34569734895)
 
-I built StreamML to connect transaction analytics with a controlled machine-learning workflow. I implemented a bounded synthetic producer, Kinesis integration, retry-safe Lambda processing, a private S3 data lake, DynamoDB metrics, an authenticated React dashboard and a SageMaker Pipelines definition. I wanted to answer two operational questions: *what is happening in the stream now?* and *is a new model good enough to use?*
+## What this project is about
 
-**What I verified:** my [local tests](docs/testing.md), published Pages dashboard and isolated AWS CodeBuild deployment. The AWS run **passed Docker ML/HTTP tests and completed ECR scanning with zero reported findings**. I preserved two failed Debian-image scans, then fixed the base-image issue with Alpine while keeping the security gate unchanged. I have **not deployed the full streaming stack or run SageMaker or the main CodePipeline**: Kinesis eligibility and job quotas blocked that part of the lab. My [container evidence](docs/container-build.md) records the successful bounded AWS experiment.
+I built StreamML around a fictional payments business. It has a dashboard for viewing transaction activity and a separate process for testing a model that estimates whether a transaction looks suspicious. A **model** is a program that learns patterns from examples. All the transaction data in this project is made up; I did not use real cards, customers or payments.
 
-**My cost approach:** I kept lab runs short and aimed for a **one-time $100 credit budget**. I used the Free plan, avoided always-on inference, and left the complete Kinesis-based stack undeployed when the service was unavailable. My [cost notes](docs/cost.md) explain the controls and billing delay, and my [shared project cost report](docs/cost-report.md) records the broader budget picture.
+## The problem I wanted to solve
 
-I removed the temporary container-test infrastructure after capturing the evidence. I verified that its image repository, artifact bucket, build project, role and log group were absent and that no known build remained running. I kept the source, metrics and failure history in this portfolio.
+I wanted to answer two questions: **What is happening in the transactions?** and **Is a new model good enough to use?** A business needs useful answers even when a transaction arrives twice, a record is incomplete, or a new model makes too many mistakes. It also needs to keep the original records so someone can investigate later.
+
+## My solution and how it works
+
+I wrote two connected parts:
+
+1. **The transaction part:** receive transactions, check their contents, avoid counting the same transaction twice, save the original records, and show recent activity on a dashboard. Simple rules mark items worth examining.
+2. **The model part:** prepare example data, let a model learn from one group of examples, and test it on separate examples. Reject a model that fails the checks. In the full AWS design, a person must also approve a passing model before it can make predictions for a batch of records.
+
+For example, if the same transaction arrives twice, the processing code is designed to count it once. If a model flags nearly every transaction, the quality checks reject it instead of treating a completed training run as a good result. I tested the processing rules locally and tested the model checks inside Docker on AWS. **Docker packages code with the software it needs to run.** The complete live transaction path was not deployed.
+
+**[Start with my easy guide to every service and connection](docs/aws-services.md).** It follows the visitor, sign-in, API, data, model and build steps. It also explains public access and private data, what each service did, and which parts actually ran on AWS.
+
+## What I actually ran
+
+| Part | What I completed |
+| --- | --- |
+| Dashboard preview | Published a working GitHub Pages preview with clearly labelled sample data. It does not connect to AWS. |
+| Docker and model experiment | Used AWS CodeBuild to build and run my Docker package, test learning and predictions, reject a deliberately poor model, and check the package for known security issues. |
+| Final container scan | Passed with zero reported findings after two earlier builds failed their security scans. I kept the failed results and the fix in my documentation. |
+| Complete AWS transaction and model system | Wrote the application and Terraform setup, but did **not** deploy the complete system. Kinesis access was restricted and the required SageMaker training and batch-prediction quotas were unavailable. |
+| Main AWS CodePipeline | Defined in code, but not run. The separate CodeBuild experiment and GitHub Pages workflow did run. |
+
+CodeBuild supplied the temporary AWS worker that built and tested the Docker package. A **quota** is an account limit on how much of a service can run. My [container experiment](docs/container-build.md) and [testing notes](docs/testing.md) record the results.
+
+## What is available now
+
+I removed the temporary AWS container-test environment after saving the results. I checked that its image store, file bucket, build project, access role and log group were gone and that no known build was still running. The source code, documentation, test evidence and GitHub Pages preview remain available.
+
+I kept the runs short because I wanted to stay within a **one-time $100 credit budget**. I stayed on the Free plan and avoided keeping a prediction service running all day. My [cost notes](docs/cost.md) and [shared project cost report](docs/cost-report.md) explain the budget and billing records.
 
 ![StreamML published GitHub Pages dashboard with labelled sample data](docs/screenshots/streamml-github-pages.png)
 
@@ -18,13 +47,9 @@ I removed the temporary container-test infrastructure after capturing the eviden
 
 [Earlier local dashboard](docs/screenshots/streamml-sample-dashboard.png) · [Model governance and transaction feed — actual local preview](docs/screenshots/streamml-governance-preview.png).
 
-## Business problem
+## Full system design — written, not deployed
 
-I used a payments-operations scenario to connect transaction visibility with reproducible training and controlled releases. I separated ingestion correctness, business rules, held-out model quality, human model approval and inference creation so that a successful training run alone cannot promote a model.
-
-I generated fictional card identifiers and synthetic labels without real card numbers, names or payments. I use this dataset to demonstrate engineering behavior; I have not validated the model for financial fraud detection.
-
-## Architecture
+The diagram below shows the complete design. It is not a picture of a currently running AWS system. My [service guide](docs/aws-services.md) explains the names in plain words; the sections after it keep the technical details needed to rebuild the project.
 
 ```mermaid
 flowchart LR
@@ -37,7 +62,8 @@ flowchart LR
   U[Signed-in operator] --> C[CloudFront / React]
   U --> A[Cognito / PKCE]
   C --> G[HTTP API / JWT scope]
-  G --> D
+  G --> API[API Lambda]
+  API --> D
   S --> AT[Athena / 10 MiB scan cap]
   S --> PR[SageMaker preprocessing]
   PR --> T[Train]
