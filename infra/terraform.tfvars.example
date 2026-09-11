@@ -1,0 +1,11 @@
+region = "us-east-1"
+environment = "dev"
+# First apply with ml_image_uri empty, then build/push your immutable image and set its URI.
+ml_image_uri = ""
+enable_monitor = false
+auto_retrain = false
+enable_ci = false
+connection_arn = ""
+github_repository = ""
+run_training_after_deploy = false
+

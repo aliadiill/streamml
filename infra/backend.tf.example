@@ -1,0 +1,9 @@
+terraform {
+  backend "s3" {
+    # Supply bucket/region with terraform init -backend-config, using your approved private state bucket.
+    key = "streamml/dev.tfstate"
+    encrypt = true
+    use_lockfile = true
+  }
+}
+

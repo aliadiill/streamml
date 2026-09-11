@@ -1,0 +1,388 @@
+{
+  "Version": "2020-12-01",
+  "Metadata": {
+    "project": "streamml"
+  },
+  "Parameters": [
+    {
+      "Name": "TrainingDataUri",
+      "Type": "String",
+      "DefaultValue": "s3://${bucket_name}/raw/events/"
+    }
+  ],
+  "Steps": [
+    {
+      "Name": "Preprocess",
+      "Type": "Processing",
+      "Arguments": {
+        "RoleArn": "${role_arn}",
+        "AppSpecification": {
+          "ImageUri": "${image_uri}",
+          "ContainerEntrypoint": [
+            "python3",
+            "/opt/program/job.py",
+            "preprocess"
+          ]
+        },
+        "ProcessingResources": {
+          "ClusterConfig": {
+            "InstanceCount": 1,
+            "InstanceType": "ml.m5.large",
+            "VolumeSizeInGB": 10
+          }
+        },
+        "StoppingCondition": {
+          "MaxRuntimeInSeconds": 600
+        },
+        "NetworkConfig": {
+          "EnableNetworkIsolation": true
+        },
+        "ProcessingInputs": [
+          {
+            "InputName": "data",
+            "S3Input": {
+              "S3Uri": {
+                "Get": "Parameters.TrainingDataUri"
+              },
+              "LocalPath": "/opt/ml/processing/input/data",
+              "S3DataType": "S3Prefix",
+              "S3InputMode": "File",
+              "S3DataDistributionType": "FullyReplicated"
+            }
+          }
+        ],
+        "ProcessingOutputConfig": {
+          "Outputs": [
+            {
+              "OutputName": "train",
+              "S3Output": {
+                "S3Uri": {
+                  "Std:Join": {
+                    "On": "/",
+                    "Values": [
+                      "s3://${bucket_name}/ml/runs",
+                      {
+                        "Get": "Execution.PipelineExecutionId"
+                      },
+                      "train"
+                    ]
+                  }
+                },
+                "LocalPath": "/opt/ml/processing/output/train",
+                "S3UploadMode": "EndOfJob"
+              }
+            },
+            {
+              "OutputName": "validation",
+              "S3Output": {
+                "S3Uri": {
+                  "Std:Join": {
+                    "On": "/",
+                    "Values": [
+                      "s3://${bucket_name}/ml/runs",
+                      {
+                        "Get": "Execution.PipelineExecutionId"
+                      },
+                      "validation"
+                    ]
+                  }
+                },
+                "LocalPath": "/opt/ml/processing/output/validation",
+                "S3UploadMode": "EndOfJob"
+              }
+            },
+            {
+              "OutputName": "test",
+              "S3Output": {
+                "S3Uri": {
+                  "Std:Join": {
+                    "On": "/",
+                    "Values": [
+                      "s3://${bucket_name}/ml/runs",
+                      {
+                        "Get": "Execution.PipelineExecutionId"
+                      },
+                      "test"
+                    ]
+                  }
+                },
+                "LocalPath": "/opt/ml/processing/output/test",
+                "S3UploadMode": "EndOfJob"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "Name": "Train",
+      "Type": "Training",
+      "Arguments": {
+        "RoleArn": "${role_arn}",
+        "AlgorithmSpecification": {
+          "TrainingImage": "${image_uri}",
+          "TrainingInputMode": "File",
+          "ContainerEntrypoint": [
+            "python3",
+            "/opt/program/job.py"
+          ],
+          "ContainerArguments": [
+            "train"
+          ]
+        },
+        "InputDataConfig": [
+          {
+            "ChannelName": "train",
+            "DataSource": {
+              "S3DataSource": {
+                "S3DataType": "S3Prefix",
+                "S3Uri": {
+                  "Get": "Steps.Preprocess.ProcessingOutputConfig.Outputs['train'].S3Output.S3Uri"
+                },
+                "S3DataDistributionType": "FullyReplicated"
+              }
+            }
+          },
+          {
+            "ChannelName": "validation",
+            "DataSource": {
+              "S3DataSource": {
+                "S3DataType": "S3Prefix",
+                "S3Uri": {
+                  "Get": "Steps.Preprocess.ProcessingOutputConfig.Outputs['validation'].S3Output.S3Uri"
+                },
+                "S3DataDistributionType": "FullyReplicated"
+              }
+            }
+          }
+        ],
+        "OutputDataConfig": {
+          "S3OutputPath": {
+            "Std:Join": {
+              "On": "/",
+              "Values": [
+                "s3://${bucket_name}/ml/runs",
+                {
+                  "Get": "Execution.PipelineExecutionId"
+                },
+                "model"
+              ]
+            }
+          }
+        },
+        "ResourceConfig": {
+          "InstanceCount": 1,
+          "InstanceType": "ml.m5.large",
+          "VolumeSizeInGB": 10
+        },
+        "StoppingCondition": {
+          "MaxRuntimeInSeconds": 600
+        },
+        "EnableNetworkIsolation": true
+      }
+    },
+    {
+      "Name": "Evaluate",
+      "Type": "Processing",
+      "Arguments": {
+        "RoleArn": "${role_arn}",
+        "AppSpecification": {
+          "ImageUri": "${image_uri}",
+          "ContainerEntrypoint": [
+            "python3",
+            "/opt/program/job.py",
+            "evaluate"
+          ]
+        },
+        "ProcessingResources": {
+          "ClusterConfig": {
+            "InstanceCount": 1,
+            "InstanceType": "ml.m5.large",
+            "VolumeSizeInGB": 10
+          }
+        },
+        "StoppingCondition": {
+          "MaxRuntimeInSeconds": 600
+        },
+        "NetworkConfig": {
+          "EnableNetworkIsolation": true
+        },
+        "ProcessingInputs": [
+          {
+            "InputName": "test",
+            "S3Input": {
+              "S3Uri": {
+                "Get": "Steps.Preprocess.ProcessingOutputConfig.Outputs['test'].S3Output.S3Uri"
+              },
+              "LocalPath": "/opt/ml/processing/input/test",
+              "S3DataType": "S3Prefix",
+              "S3InputMode": "File",
+              "S3DataDistributionType": "FullyReplicated"
+            }
+          },
+          {
+            "InputName": "model",
+            "S3Input": {
+              "S3Uri": {
+                "Get": "Steps.Train.ModelArtifacts.S3ModelArtifacts"
+              },
+              "LocalPath": "/opt/ml/processing/input/model",
+              "S3DataType": "S3Prefix",
+              "S3InputMode": "File",
+              "S3DataDistributionType": "FullyReplicated"
+            }
+          }
+        ],
+        "ProcessingOutputConfig": {
+          "Outputs": [
+            {
+              "OutputName": "evaluation",
+              "S3Output": {
+                "S3Uri": {
+                  "Std:Join": {
+                    "On": "/",
+                    "Values": [
+                      "s3://${bucket_name}/ml/runs",
+                      {
+                        "Get": "Execution.PipelineExecutionId"
+                      },
+                      "evaluation"
+                    ]
+                  }
+                },
+                "LocalPath": "/opt/ml/processing/output/evaluation",
+                "S3UploadMode": "EndOfJob"
+              }
+            }
+          ]
+        }
+      },
+      "PropertyFiles": [
+        {
+          "PropertyFileName": "Report",
+          "OutputName": "evaluation",
+          "FilePath": "evaluation.json"
+        }
+      ]
+    },
+    {
+      "Name": "QualityGate",
+      "Type": "Condition",
+      "Arguments": {
+        "Conditions": [
+          {
+            "Type": "GreaterThanOrEqualTo",
+            "LeftValue": {
+              "Std:JsonGet": {
+                "PropertyFile": {
+                  "Get": "Steps.Evaluate.PropertyFiles.Report"
+                },
+                "Path": "f1"
+              }
+            },
+            "RightValue": 0.8
+          },
+          {
+            "Type": "GreaterThanOrEqualTo",
+            "LeftValue": {
+              "Std:JsonGet": {
+                "PropertyFile": {
+                  "Get": "Steps.Evaluate.PropertyFiles.Report"
+                },
+                "Path": "recall"
+              }
+            },
+            "RightValue": 0.7
+          },
+          {
+            "Type": "LessThanOrEqualTo",
+            "LeftValue": {
+              "Std:JsonGet": {
+                "PropertyFile": {
+                  "Get": "Steps.Evaluate.PropertyFiles.Report"
+                },
+                "Path": "false_positive_rate"
+              }
+            },
+            "RightValue": 0.1
+          },
+          {
+            "Type": "GreaterThanOrEqualTo",
+            "LeftValue": {
+              "Std:JsonGet": {
+                "PropertyFile": {
+                  "Get": "Steps.Evaluate.PropertyFiles.Report"
+                },
+                "Path": "samples"
+              }
+            },
+            "RightValue": 100
+          },
+          {
+            "Type": "GreaterThanOrEqualTo",
+            "LeftValue": {
+              "Std:JsonGet": {
+                "PropertyFile": {
+                  "Get": "Steps.Evaluate.PropertyFiles.Report"
+                },
+                "Path": "positives"
+              }
+            },
+            "RightValue": 5
+          },
+          {
+            "Type": "GreaterThanOrEqualTo",
+            "LeftValue": {
+              "Std:JsonGet": {
+                "PropertyFile": {
+                  "Get": "Steps.Evaluate.PropertyFiles.Report"
+                },
+                "Path": "negatives"
+              }
+            },
+            "RightValue": 5
+          }
+        ],
+        "IfSteps": [
+          {
+            "Name": "RegisterCandidate",
+            "Type": "RegisterModel",
+            "Arguments": {
+              "ModelPackageGroupName": "${package_group}",
+              "ModelApprovalStatus": "PendingManualApproval",
+              "ModelPackageDescription": "Chronological holdout gate passed; human approval required before inference.",
+              "InferenceSpecification": {
+                "Containers": [
+                  {
+                    "Image": "${image_uri}",
+                    "ModelDataUrl": {
+                      "Get": "Steps.Train.ModelArtifacts.S3ModelArtifacts"
+                    }
+                  }
+                ],
+                "SupportedContentTypes": [
+                  "application/jsonlines"
+                ],
+                "SupportedResponseMIMETypes": [
+                  "application/jsonlines"
+                ],
+                "SupportedTransformInstanceTypes": [
+                  "ml.m5.large"
+                ]
+              }
+            }
+          }
+        ],
+        "ElseSteps": [
+          {
+            "Name": "RejectModel",
+            "Type": "Fail",
+            "Arguments": {
+              "ErrorMessage": "Held-out quality gate failed; known model remains unchanged."
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

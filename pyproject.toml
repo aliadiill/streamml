@@ -1,0 +1,9 @@
+[project]
+name = "streamml"
+version = "0.1.0"
+requires-python = ">=3.11"
+description = "Bounded transaction analytics and gated ML portfolio system"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+

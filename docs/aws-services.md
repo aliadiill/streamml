@@ -1,0 +1,20 @@
+# Why these AWS services
+
+| Service | Problem it solves | Tradeoff and limit |
+| --- | --- | --- |
+| Kinesis Data Streams | Ordered per-card streaming and replay window | One provisioned shard has ongoing cost; 24-hour retention; required service may be plan-restricted |
+| Lambda | Bounded event processing and authenticated metrics reads | Retries require idempotency; configured concurrency caps are not full spend caps |
+| S3 | Canonical raw events, experiment outputs, website assets | One object per event is acceptable only for this small lab; production analytics needs compaction |
+| DynamoDB | Atomic dedup/counters and recent-event reads | Single minute bucket and single timeline partition are deliberate small-volume limits |
+| API Gateway + Cognito | Authenticated read API and user sign-in | Browser tokens require XSS protections; hosted login is an external dependency |
+| CloudFront | HTTPS static delivery, private S3 access and same-origin API routing | Distribution propagation is slow; API cache is disabled |
+| Glue catalog + Athena | SQL exploration without a database server | A catalog definition replaces a crawler; 10 MiB query cap limits accidental scans |
+| SageMaker Pipelines + Registry | Managed job dependencies and controlled model versions | Three transient jobs per training run; approval does not imply deployment |
+| ECR | Immutable ML container storage and scanning | Tagged images must remain while registry versions reference them |
+| EventBridge | Daily drift schedule and failed-pipeline events | Schedule disabled initially; drift and model performance are different signals |
+| CloudWatch + SNS | Failure/lag alarms and operations event routing | No delivered alert exists until a confirmed subscription is configured and tested |
+| SQS | Failed stream-batch investigation metadata | Not a complete archive of all original records |
+| CodePipeline + CodeBuild | GitHub-sourced tests, review and deployment | Source installation and real AWS pipeline execution are still pending cloud validation |
+
+A persistent SageMaker endpoint, managed Spark cluster, OpenSearch domain, NAT Gateway, Glue crawler and extra database are intentionally absent because they would not improve the bounded demonstration enough to justify cost or complexity.
+

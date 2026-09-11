@@ -1,0 +1,14 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+      nodejs: 20
+  build:
+    commands:
+      - bash scripts/deploy.sh
+artifacts:
+  files:
+    - build/image-scan.json
+    - build/pipeline.json
+

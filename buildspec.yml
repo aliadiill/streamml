@@ -1,0 +1,25 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+      nodejs: 20
+    commands:
+      - bash scripts/install_terraform.sh
+      - cd dashboard && npm ci && cd ..
+  build:
+    commands:
+      - export PYTHONPATH=src:ml
+      - python -m unittest discover -s tests -v
+      - python scripts/local_demo.py
+      - python scripts/package.py
+      - python -m compileall -q src ml scripts
+      - cd dashboard && npm run build && npm audit --audit-level=high && cd ..
+      - terraform -chdir=infra fmt -check -recursive
+      - terraform -chdir=infra init -backend=false -input=false
+      - terraform -chdir=infra validate
+artifacts:
+  files:
+    - .local/evaluation.json
+    - build/pipeline.json
+
