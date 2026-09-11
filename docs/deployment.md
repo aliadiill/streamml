@@ -6,7 +6,7 @@ No AWS apply was run by the implementation agent. The lead's current account che
 
 Use `us-east-1` and short-lived IAM/federated credentials. Confirm Kinesis availability, SageMaker Processing/Training/Transform quotas for `ml.m5.large`, Lambda concurrency, remaining credits and an intended teardown time. No credentials belong in Terraform variables or Git.
 
-On 2026-09-11 UTC the lead verified that ml.m5.large training, processing and transform quotas are all zero in us-east-1. Along with the Kinesis subscription restriction, this blocks the full live demonstration. Keep the source and local evidence; no quota increase or paid plan change is requested by this runbook.
+On 2026-09-11 UTC account checks verified that ml.m5.large training, processing and transform quotas are all zero in us-east-1. The applied-quota listing showed processing alternatives ml.t3.medium=4, ml.t3.large=4 and ml.t3.xlarge=2, but no positive training or transform instance quota. These alternatives do not unblock the specified full pipeline. Along with the Kinesis subscription restriction, this blocks the full live demonstration. Keep the source and observed evidence; no quota increase or paid plan change is requested by this runbook.
 
 ## 1. Build and validate locally
 

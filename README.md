@@ -4,7 +4,7 @@
 
 StreamML connects a bounded synthetic transaction generator to Kinesis, retry-safe Lambda processing, a private S3 data lake, DynamoDB metrics, an authenticated React dashboard, and SageMaker Pipelines. It answers two different operational questions: *what is happening in the stream now?* and *is a new model good enough to use?*
 
-**Current status:** source implementation and local verification are complete as recorded in [testing](docs/testing.md). AWS deployment, authenticated cloud integration, actual SageMaker execution and CI/CD execution have **not** been verified. The learning account returned a Kinesis subscription/plan restriction during the lead's access checks; this project does not change the account plan. Screenshot evidence must distinguish the real local interface from a deployed AWS service.
+**Current status:** source implementation and local verification are complete as recorded in [testing](docs/testing.md). An isolated AWS CodeBuild deployment **passed real Docker ML/HTTP tests and a completed ECR scan with zero reported findings**. Two earlier Debian images failed the unchanged security gate; the final Alpine correction succeeded. Full streaming deployment, authenticated cloud integration, actual SageMaker execution and the main CI/CD pipeline remain **unverified**. The learning account returned a Kinesis subscription/plan restriction; this project does not change the account plan. See the [actual container proof](docs/container-build.md).
 
 **Cost constraint:** the owner permits at most **USD 100 total promotional-credit use**, with **zero personal/out-of-pocket spending now or later**. Keep the Free plan; no paid upgrade is authorized. The complete Kinesis-based stack therefore remains undeployed while that service is unavailable. Do not run the full Terraform apply under the current restriction.
 
@@ -49,6 +49,10 @@ flowchart LR
 ```
 
 Read the [architecture](docs/architecture.md), [ML design](docs/ml-design.md), [security](docs/security.md), and [service tradeoffs](docs/aws-services.md).
+
+The [build journal](docs/build-journal.md) records real blockers, failed image scans, corrective attempts and model limitations. The [Pages preview guide](docs/pages-preview.md) explains the separate static demonstration and its deployment history.
+
+For a separately approved Docker demonstration without Kinesis or SageMaker jobs, use the isolated [CodeBuild container proof](docs/container-build.md). It runs the real container preprocessing, training, evaluation, bad-model rejection and HTTP inference entrypoints under a ten-minute build limit. An actual build result remains separate from a SageMaker execution.
 
 ## Run locally
 

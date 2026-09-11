@@ -1,0 +1,210 @@
+{
+  "recorded_date_utc": "2026-09-11",
+  "scope": "Isolated Docker on AWS CodeBuild; full StreamML and SageMaker remain undeployed",
+  "bootstrap": {
+    "terraform_created": 13,
+    "updated": 0,
+    "deleted": 0,
+    "compute": "BUILD_GENERAL1_SMALL",
+    "build_timeout_minutes": 10,
+    "state": "deployed temporarily; evidence capture pending cleanup"
+  },
+  "attempts": [
+    {
+      "label": "first",
+      "base": "python:3.12-slim",
+      "start_utc": "2026-09-11T06:00:07.809000+00:00",
+      "end_utc": "2026-09-11T06:01:16.394000+00:00",
+      "duration_seconds": 68.585,
+      "status": "FAILED",
+      "source_sha256": "cad109b1cb428ad7b75fd1f7b3ac86b5f14da22a48db12225773d40060dae98d",
+      "image_digest": "sha256:89b4c94b5e6089ebd1d96935804d6bd1daac58df0c77f62315a69e0888147f6d",
+      "tests": {
+        "timestamp": "2026-09-11T06:01:02.488454+00:00",
+        "source_hash": "cad109b1cb428ad7b75fd1f7b3ac86b5f14da22a48db12225773d40060dae98d",
+        "preprocess": "passed",
+        "training": "passed",
+        "heldout_quality": "passed",
+        "bad_model_rejection": "passed",
+        "http_predictions": 3,
+        "execution_kind": "Docker containers on AWS CodeBuild; not a SageMaker pipeline execution"
+      },
+      "evaluation": {
+        "f1": 0.9298245614035087,
+        "precision": 0.9137931034482759,
+        "recall": 0.9464285714285714,
+        "false_positive_rate": 0.009191176470588236,
+        "positives": 56,
+        "negatives": 544,
+        "samples": 600,
+        "true_positives": 53,
+        "false_positives": 5,
+        "false_negatives": 3,
+        "true_negatives": 539,
+        "passed": true
+      },
+      "deliberately_bad_evaluation": {
+        "f1": 0.17073170731707318,
+        "precision": 0.09333333333333334,
+        "recall": 1.0,
+        "false_positive_rate": 1.0,
+        "positives": 56,
+        "negatives": 544,
+        "samples": 600,
+        "true_positives": 56,
+        "false_positives": 544,
+        "false_negatives": 0,
+        "true_negatives": 0,
+        "passed": false
+      },
+      "image_scan": {
+        "service": "Amazon ECR basic scanning",
+        "status": "COMPLETE",
+        "severity_counts": {
+          "HIGH": 11,
+          "MEDIUM": 3,
+          "LOW": 1,
+          "CRITICAL": 6
+        },
+        "finding_count": 21,
+        "release_gate": "failed"
+      }
+    },
+    {
+      "label": "second",
+      "base": "python:3.12-slim with available Debian upgrades",
+      "start_utc": "2026-09-11T06:07:52.681000+00:00",
+      "end_utc": "2026-09-11T06:08:59.432000+00:00",
+      "duration_seconds": 66.751,
+      "status": "FAILED",
+      "source_sha256": "3b6290541c0dbe7ba58a09338da437ff617914b40553ba4680640819011fb313",
+      "image_digest": "sha256:f49ff56a513c89dfd8e0de316bf5f4a647a956328de3915c9595bc92d4988e02",
+      "tests": {
+        "timestamp": "2026-09-11T06:08:45.446999+00:00",
+        "source_hash": "3b6290541c0dbe7ba58a09338da437ff617914b40553ba4680640819011fb313",
+        "preprocess": "passed",
+        "training": "passed",
+        "heldout_quality": "passed",
+        "bad_model_rejection": "passed",
+        "http_predictions": 3,
+        "execution_kind": "Docker containers on AWS CodeBuild; not a SageMaker pipeline execution"
+      },
+      "evaluation": {
+        "f1": 0.9298245614035087,
+        "precision": 0.9137931034482759,
+        "recall": 0.9464285714285714,
+        "false_positive_rate": 0.009191176470588236,
+        "positives": 56,
+        "negatives": 544,
+        "samples": 600,
+        "true_positives": 53,
+        "false_positives": 5,
+        "false_negatives": 3,
+        "true_negatives": 539,
+        "passed": true
+      },
+      "deliberately_bad_evaluation": {
+        "f1": 0.17073170731707318,
+        "precision": 0.09333333333333334,
+        "recall": 1.0,
+        "false_positive_rate": 1.0,
+        "positives": 56,
+        "negatives": 544,
+        "samples": 600,
+        "true_positives": 56,
+        "false_positives": 544,
+        "false_negatives": 0,
+        "true_negatives": 0,
+        "passed": false
+      },
+      "image_scan": {
+        "service": "Amazon ECR basic scanning",
+        "status": "COMPLETE",
+        "severity_counts": {
+          "HIGH": 11,
+          "MEDIUM": 3,
+          "LOW": 1,
+          "CRITICAL": 6
+        },
+        "finding_count": 21,
+        "release_gate": "failed"
+      }
+    },
+    {
+      "label": "third",
+      "base": "python:3.12-alpine with apk upgrade --no-cache",
+      "start_utc": "2026-09-11T06:13:56.023000+00:00",
+      "end_utc": "2026-09-11T06:15:55.572000+00:00",
+      "duration_seconds": 119.549,
+      "status": "SUCCEEDED",
+      "source_sha256": "b5fc936bcab3c03790ecd5bd8841caf7c9472d892d235bf5b7057bbf8ab12f22",
+      "image_digest": "sha256:ac2c4849c03b2b1f14149438df77b3a081513bb8045d5c14cae92190ac8c3593",
+      "tests": {
+        "timestamp": "2026-09-11T06:14:45.811254+00:00",
+        "source_hash": "b5fc936bcab3c03790ecd5bd8841caf7c9472d892d235bf5b7057bbf8ab12f22",
+        "preprocess": "passed",
+        "training": "passed",
+        "heldout_quality": "passed",
+        "bad_model_rejection": "passed",
+        "http_predictions": 3,
+        "execution_kind": "Docker containers on AWS CodeBuild; not a SageMaker pipeline execution"
+      },
+      "evaluation": {
+        "f1": 0.9298245614035087,
+        "precision": 0.9137931034482759,
+        "recall": 0.9464285714285714,
+        "false_positive_rate": 0.009191176470588236,
+        "positives": 56,
+        "negatives": 544,
+        "samples": 600,
+        "true_positives": 53,
+        "false_positives": 5,
+        "false_negatives": 3,
+        "true_negatives": 539,
+        "passed": true
+      },
+      "deliberately_bad_evaluation": {
+        "f1": 0.17073170731707318,
+        "precision": 0.09333333333333334,
+        "recall": 1.0,
+        "false_positive_rate": 1.0,
+        "positives": 56,
+        "negatives": 544,
+        "samples": 600,
+        "true_positives": 56,
+        "false_positives": 544,
+        "false_negatives": 0,
+        "true_negatives": 0,
+        "passed": false
+      },
+      "image_scan": {
+        "service": "Amazon ECR basic scanning",
+        "status": "COMPLETE",
+        "severity_counts": {},
+        "finding_count": 0,
+        "release_gate": "passed"
+      }
+    }
+  ],
+  "sagemaker_applied_instance_quotas": {
+    "region": "us-east-1",
+    "nonzero_processing": {
+      "ml.t3.medium": 4,
+      "ml.t3.large": 4,
+      "ml.t3.xlarge": 2
+    },
+    "nonzero_training": {},
+    "nonzero_transform": {}
+  },
+  "cost_constraints": {
+    "promotional_credit_ceiling_usd_total": 100,
+    "personal_spending_usd": 0,
+    "paid_upgrade_authorized": false
+  },
+  "outcome": "Final Alpine image passed functional tests and completed ECR scan with zero reported findings. Prior Debian attempts failed the unchanged vulnerability gate.",
+  "limitations": [
+    "No SageMaker pipeline or full streaming application execution",
+    "Scanner results are a dated observation of the tested digest, not a permanent vulnerability guarantee",
+    "Synthetic held-out data is not independent real-world fraud validation"
+  ]
+}

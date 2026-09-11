@@ -1,7 +1,5 @@
 * text=auto
 *.sh text eol=lf
 *.py text eol=lf
-*.tf text eol=lf
 *.yml text eol=lf
-Dockerfile text eol=lf
-*.png binary
+*.tf text eol=lf

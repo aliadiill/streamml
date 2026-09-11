@@ -1,0 +1,30 @@
+{
+  "f1": 0.9298245614035087,
+  "precision": 0.9137931034482759,
+  "recall": 0.9464285714285714,
+  "false_positive_rate": 0.009191176470588236,
+  "positives": 56,
+  "negatives": 544,
+  "samples": 600,
+  "true_positives": 53,
+  "false_positives": 5,
+  "false_negatives": 3,
+  "true_negatives": 539,
+  "passed": true,
+  "split": {
+    "train": 1800,
+    "validation": 600,
+    "test": 600
+  },
+  "drifted_sample": {
+    "eligible": true,
+    "score": 1.2955689867684672,
+    "feature_mean_shift": {
+      "log_amount": 1.2955689867684672,
+      "log_distance": 0.012690143320449699,
+      "attempts_1h": 0.03013767603976032,
+      "merchant_risk": 0.06372297718198788,
+      "online": 0.007695930890291056
+    }
+  }
+}

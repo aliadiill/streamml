@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {createRoot} from "react-dom/client";
-import {completeLogin, login, logout, token} from "./auth";
+import {completeLogin, demoOnly, login, logout, token} from "./auth";
 import "./style.css";
 
 type Transaction = {id: string; at: string; amount: number; anomaly: boolean};
@@ -12,13 +12,13 @@ const sample: Metrics = {window_minutes: 60, generated_at: "2026-01-01T01:00:00Z
 const money = (n: number) => new Intl.NumberFormat("en-US", {style: "currency", currency: "USD", maximumFractionDigits: 0}).format(n);
 function App() {
   const [data, setData] = useState<Metrics | null>(null);
-  const [preview, setPreview] = useState(false);
+  const [preview, setPreview] = useState(demoOnly);
   const [signedIn, setSignedIn] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  useEffect(() => {completeLogin().then(() => setSignedIn(Boolean(token()))).catch((e: Error) => setError(e.message)).finally(() => setLoading(false));}, []);
+  useEffect(() => {if (demoOnly) {setLoading(false); return;} completeLogin().then(() => setSignedIn(Boolean(token()))).catch((e: Error) => setError(e.message)).finally(() => setLoading(false));}, []);
   useEffect(() => {
-    if (!signedIn || preview) return;
+    if (demoOnly || !signedIn || preview) return;
     let cancelled = false;
     const refresh = async () => {
       const access = token();
@@ -36,13 +36,13 @@ function App() {
   }, [signedIn, preview]);
   const shown = preview ? sample : data;
   return <div className="shell">
-    <aside><a className="brand" href="/">S<span>∿</span><strong>StreamML</strong></a><p className="overline">INTELLIGENCE WORKSPACE</p>
+    <aside><a className="brand" href={import.meta.env.BASE_URL}>S<span>∿</span><strong>StreamML</strong></a><p className="overline">INTELLIGENCE WORKSPACE</p>
       <a className="nav active" href="#overview">◉ <span>Live overview</span></a><a className="nav" href="#transactions">⇄ <span>Transactions</span></a><a className="nav" href="#governance">◇ <span>Model governance</span></a>
       <div className="rail-bottom"><span className="dot"/> Transaction anomaly lab<br/><small>us-east-1 · development</small></div>
     </aside>
     <main><header><span>OPERATIONS / OVERVIEW</span><div className="header-actions">{preview && <span className="sample-tag">SAMPLE DATA</span>}
-      {signedIn ? <button onClick={logout}>Sign out</button> : <button onClick={() => login().catch((e: Error) => setError(e.message))}>Sign in with Cognito ↗</button>}</div></header>
-      <section id="overview" className="heading"><div><p className="overline">STREAMING ANALYTICS</p><h1>Every transaction.<br/><span>A clearer signal.</span></h1><p className="muted">A bounded transaction stream with accountable model decisions.</p></div><div className="status"><span className="dot"/>{preview ? "Local sample preview" : signedIn ? "Authenticated workspace" : "AWS connection required"}<small>{shown ? "Window: last 60 minutes" : "No live cloud results yet"}</small></div></section>
+      {demoOnly ? <span className="muted">Portfolio preview</span> : signedIn ? <button onClick={logout}>Sign out</button> : <button onClick={() => login().catch((e: Error) => setError(e.message))}>Sign in with Cognito ↗</button>}</div></header>
+      <section id="overview" className="heading"><div><p className="overline">STREAMING ANALYTICS</p><h1>Every transaction.<br/><span>A clearer signal.</span></h1><p className="muted">A bounded transaction stream with accountable model decisions.</p></div><div className="status"><span className="dot"/>{preview ? "Sample preview" : signedIn ? "Authenticated workspace" : "AWS connection required"}<small>{shown ? "Window: last 60 minutes" : "No live cloud results yet"}</small></div></section>
       {error && <div role="alert" className="alert">{error}</div>}
       {!signedIn && !preview && <section className="welcome"><div><h2>Explore the workspace</h2><p>Sign in to read deployed metrics, or open an explicitly labelled interface preview. The preview contains illustrative values and makes no AWS calls.</p></div><button className="primary" disabled={loading} onClick={() => setPreview(true)}>Open sample preview →</button></section>}
       {shown && <><section className="metrics">
@@ -56,4 +56,3 @@ function App() {
   </div>;
 }
 createRoot(document.getElementById("root")!).render(<React.StrictMode><App/></React.StrictMode>);
-

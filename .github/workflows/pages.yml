@@ -1,0 +1,50 @@
+name: Publish portfolio preview
+
+on:
+  push:
+    branches: [main]
+    paths: ["dashboard/**", "scripts/check_pages.mjs", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+      - run: npm ci
+        working-directory: dashboard
+      - run: npm run build:pages
+        working-directory: dashboard
+      - run: node scripts/check_pages.mjs
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dashboard/dist
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy portfolio preview
+        id: deployment
+        uses: actions/deploy-pages@v4

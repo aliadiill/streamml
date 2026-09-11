@@ -1,15 +1,25 @@
 # Verification record
 
-Recorded on 2026-09-11 UTC. These results describe local execution only.
+Recorded on 2026-09-11 UTC. Local verification and the isolated AWS container demonstration are recorded separately below.
+
+Machine-readable evidence: [verification summary](evidence/local-verification.json) and [actual local evaluation](evidence/local-evaluation.json).
 
 ## Completed locally
 
 - **16 Python tests passed**, including duplicate handling, conflicting duplicate rejection, invalid/poison-record handling, recovery after S3-write/DynamoDB-commit interruption, content-hash conditional writes, transaction structure, deterministic bounded generation, chronological disjoint splits, excluded label/identity features, training reproducibility, quality rejection, drift controls, unapproved-model denial and SageMaker API-argument shape validation.
 - The API-shape check used an installed botocore SageMaker service model, with no credentials or AWS request. Initial sandbox runs could not read the shared package directory; running the same offline test with package filesystem access resolved that environment limitation.
 - The **React/TypeScript production build passed**. npm dependency installation audited 120 packages and reported **zero vulnerabilities** at that time.
-- Terraform formatting and provider initialization completed with AWS provider 6.64.0 and archive provider 2.8.0. Final validation status is recorded below after the current validation pass.
+- Terraform formatting, provider initialization and validation passed with AWS provider 6.64.0 and archive provider 2.8.0. The provider emitted two DynamoDB legacy key-schema deprecation warnings; they are compatibility notices, not validation errors. No Terraform plan/apply or AWS service call was part of those local checks.
 
 The injected transient-failure test intentionally logs an exception before a successful retry; its test result is passing.
+
+The independent CodeBuild container bootstrap also passed Terraform initialization, formatting and validation without warnings. All three shell scripts passed Bash syntax checks. A deterministic allowlist source ZIP was prepared.
+
+## Actual AWS container demonstration
+
+The independent bootstrap applied a reviewed 13-resource create-only plan. Three real ten-minute-capped CodeBuild executions ran Docker preprocessing, training, held-out evaluation, deliberate bad-model rejection and HTTP inference successfully. The first two Debian attempts failed the ECR gate with 6 critical and 11 high findings. The final Alpine attempt **SUCCEEDED**, with the same functional checks and a **COMPLETE ECR scan reporting zero findings**. The same held-out metrics below were reproduced inside all three containers. Actual attempts and exact digests are preserved in the [container proof](container-build.md) and [sanitized evidence](evidence/container-execution.json). This validates an actual Docker workload on AWS CodeBuild; it does not establish a SageMaker Pipeline execution or the full streaming integration.
+
+The separate Pages and normal dashboard production builds both passed. The Pages artifact passed checks for `/streamml/` asset paths and its browser connection-blocking policy. Live Pages deployment remains a separate check.
 
 ## Deterministic ML result
 
@@ -28,9 +38,9 @@ The injected transient-failure test intentionally logs an exception before a suc
 
 `python scripts/local_demo.py` reruns the actual generator, validation, splitting, training and evaluation. It saves the machine-readable report under ignored `.local/`; the summarized verified figures above are suitable for public documentation.
 
-## Cloud acceptance checklist — all unrun
+## Full-stack cloud acceptance checklist — all unrun
 
-The lead verified additional account blockers on 2026-09-11 UTC: Kinesis returned SubscriptionRequiredException, and us-east-1 quotas for ml.m5.large **training, processing and transform were each zero**. Full streaming deployment and those ML jobs therefore cannot run in the current account. No paid plan upgrade or quota increase was requested. These are observed account limits, not failed model quality or an application-code test result.
+Account checks on 2026-09-11 UTC found Kinesis SubscriptionRequiredException, and us-east-1 quotas for ml.m5.large **training, processing and transform were each zero**. A full applied-quota listing found nonzero processing quotas for ml.t3.medium (4), ml.t3.large (4) and ml.t3.xlarge (2), but no positive training or transform instance quota. An alternative isolated processing job could be considered separately; it does not unblock the specified pipeline. Full streaming deployment and the selected ML jobs remain unrun. No paid plan upgrade or quota increase was requested.
 
 | Test | Expected evidence |
 | --- | --- |

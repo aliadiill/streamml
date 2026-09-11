@@ -1,13 +1,16 @@
+export const demoOnly = import.meta.env.VITE_DEMO_ONLY === "true";
 const domain = import.meta.env.VITE_COGNITO_DOMAIN as string | undefined;
 const client = import.meta.env.VITE_COGNITO_CLIENT_ID as string | undefined;
-const redirect = (import.meta.env.VITE_REDIRECT_URI as string | undefined) || window.location.origin + "/";
+const redirect = (import.meta.env.VITE_REDIRECT_URI as string | undefined) || window.location.origin + import.meta.env.BASE_URL;
 const encode = (bytes: Uint8Array) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 
 export function token(): string | null {
+  if (demoOnly) return null;
   const expiry = Number(sessionStorage.getItem("streamml_expiry") || 0);
   return expiry > Date.now() + 5000 ? sessionStorage.getItem("streamml_token") : null;
 }
 export async function login(): Promise<void> {
+  if (demoOnly) throw new Error("The portfolio preview has no AWS connection.");
   if (!domain || !client) throw new Error("Configure Cognito to connect to AWS. Use the labelled sample preview meanwhile.");
   const verifier = encode(crypto.getRandomValues(new Uint8Array(32)));
   const state = encode(crypto.getRandomValues(new Uint8Array(24)));
@@ -19,6 +22,7 @@ export async function login(): Promise<void> {
   window.location.assign(domain + "/oauth2/authorize?" + params);
 }
 export async function completeLogin(): Promise<void> {
+  if (demoOnly) return;
   const params = new URLSearchParams(window.location.search);
   const code = params.get("code");
   if (!code) return;
@@ -26,7 +30,7 @@ export async function completeLogin(): Promise<void> {
   const verifier = sessionStorage.getItem("streamml_verifier");
   if (!state || !verifier || params.get("state") !== state || !domain || !client)
     throw new Error("Sign-in state did not match. Start sign-in again.");
-  window.history.replaceState({}, "", "/");
+  window.history.replaceState({}, "", import.meta.env.BASE_URL);
   sessionStorage.removeItem("streamml_state");
   sessionStorage.removeItem("streamml_verifier");
   const response = await fetch(domain + "/oauth2/token", {method: "POST", headers: {"content-type": "application/x-www-form-urlencoded"},
@@ -37,8 +41,8 @@ export async function completeLogin(): Promise<void> {
   sessionStorage.setItem("streamml_expiry", String(Date.now() + body.expires_in * 1000));
 }
 export function logout(): void {
+  if (demoOnly) {window.location.reload(); return;}
   for (const key of ["streamml_token", "streamml_expiry", "streamml_state", "streamml_verifier"]) sessionStorage.removeItem(key);
   if (domain && client) window.location.assign(domain + "/logout?" + new URLSearchParams({client_id: client, logout_uri: redirect}));
   else window.location.reload();
 }
-

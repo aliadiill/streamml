@@ -1,0 +1,43 @@
+{
+  "date_utc": "2026-09-11",
+  "execution": "Local verification snapshot; separate AWS container execution is recorded in container-execution.json",
+  "python_unit_tests": {
+    "passed": 16,
+    "failed": 0,
+    "skipped": 0,
+    "includes": "Offline botocore SageMaker API argument shape validation"
+  },
+  "dashboard": {
+    "typescript_production_build": "passed",
+    "npm_install_audit": {
+      "packages": 120,
+      "vulnerabilities": 0
+    },
+    "pages_build": "passed; /streamml/ asset path and connect-src none policy verified"
+  },
+  "terraform": {
+    "main": "valid",
+    "warnings": [
+      "Legacy DynamoDB key-schema attributes deprecated by AWS provider"
+    ],
+    "bootstrap_container_build": "valid without warnings",
+    "aws_provider": "6.64.0",
+    "archive_provider": "2.8.0"
+  },
+  "shell_syntax": {
+    "container_test": "passed",
+    "deploy": "passed",
+    "install_terraform": "passed"
+  },
+  "source_archive_sha256": "cad109b1cb428ad7b75fd1f7b3ac86b5f14da22a48db12225773d40060dae98d",
+  "cloud_tests": {
+    "full_streaming": "blocked by Kinesis subscription",
+    "sagemaker_jobs": "blocked: ml.m5.large processing/training/transform quotas all zero",
+    "isolated_codebuild_docker": "Three actual AWS builds: two failed Debian vulnerability gates; final Alpine functional tests and completed ECR scan passed. See container-execution.json"
+  },
+  "cost_constraints": {
+    "promotional_credit_ceiling_usd_total": 100,
+    "personal_spending_usd": 0,
+    "paid_upgrade_authorized": false
+  }
+}

@@ -11,6 +11,6 @@
 - Implemented a transaction-streaming/MLOps portfolio system with canonical event storage, atomic deduplication counters, an authenticated dashboard and a gated SageMaker workflow.
 - Tested retry recovery, malformed records, duplicate conflicts, chronological holdouts, model rejection and denial of unapproved inference; reproduced a 600-record synthetic holdout evaluation.
 - Defined Terraform infrastructure and GitHub-to-CodePipeline/CodeBuild delivery with distinct app, model-quality and approval controls; documented current deployment blockers and unrun cloud tests.
+- Applied an independent 13-resource Terraform bootstrap and ran actual Docker ML/HTTP checks on transient AWS CodeBuild. Preserved two failed base-image vulnerability gates, then validated an Alpine correction with a completed ECR scan reporting zero findings.
 
 Do not change “implemented” to “operated in production” or claim a deployed AWS workload until real deployment evidence exists. Actual screenshots may show the local application if labelled accordingly; no generated image should substitute for an AWS console capture.
-
