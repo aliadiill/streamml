@@ -1,6 +1,8 @@
 # Cost controls and teardown
 
-The owner's limit is **USD 100 total promotional-credit use, not USD 100 per month**, with **zero personal/out-of-pocket spending now or in the future**. Retain the Free plan; a paid plan upgrade is not authorized. Kinesis is currently unavailable under the account's service eligibility, so the complete StreamML stack stays undeployed. This source implementation itself makes no billable AWS calls.
+The owner's limit is **USD 100 total promotional-credit use, not USD 100 per month**, with **zero personal/out-of-pocket spending now or in the future**. Retain the Free plan; a paid plan upgrade is not authorized. Kinesis is currently unavailable under the account's service eligibility, so the complete StreamML stack stays undeployed.
+
+The separately authorized container demonstration ran three short AWS CodeBuild executions. Its final image passed all gates, and the temporary ECR repository, source/artifact bucket, project, IAM role and logs were removed with absence verified at 06:23:58 UTC on 2026-09-11. Actual execution and cleanup are recorded in [container evidence](evidence/container-execution.json); service charges can appear later. The [published static preview](pages-preview.md) makes no AWS connection.
 
 The limits below do not promise that credits cover every service or that an alarm prevents charges. Any separately authorized bounded component test must fit within the aggregate promotional-credit ceiling and the existing Free-plan protection. Consult the [AWS pricing calculator](https://calculator.aws/) for current rates before such a test; no price quote is invented here.
 
@@ -16,6 +18,7 @@ The limits below do not promise that credits cover every service or that an alar
 | Drift/automatic training | Both disabled by default; two breaches and 24-hour cooldown | Enabling recurring jobs adds recurring cost |
 | Logs and S3 | Logs seven days; version/lifecycle rules in Terraform | Current ML artifacts and tagged images require deliberate teardown |
 | CI/CD | CodeBuild small workers, 20-minute timeout | Builds and pipeline executions cost money; don't use training for every UI edit |
+| Isolated container proof | CodeBuild small worker, 10-minute build and queue caps; three actual attempts | Temporary resources were deleted after evidence capture; incurred usage remains subject to billing delay |
 
 Kinesis and SageMaker dominate the deliberate-demo decision. Run a short, scheduled window; produce a bounded dataset; perform one experiment and one approved transform; then stop. Do not leave a stream running while doing unrelated interview preparation.
 

@@ -3,7 +3,7 @@
 | Service | Problem it solves | Tradeoff and limit |
 | --- | --- | --- |
 | Kinesis Data Streams | Ordered per-card streaming and replay window | One provisioned shard has ongoing cost; 24-hour retention; required service may be plan-restricted |
-| Lambda | Bounded event processing and authenticated metrics reads | Retries require idempotency; configured concurrency caps are not full spend caps |
+| Lambda | Bounded event processing and authenticated metrics reads | Retries require idempotency; shared account concurrency is not a spending cap |
 | S3 | Canonical raw events, experiment outputs, website assets | One object per event is acceptable only for this small lab; production analytics needs compaction |
 | DynamoDB | Atomic dedup/counters and recent-event reads | Single minute bucket and single timeline partition are deliberate small-volume limits |
 | API Gateway + Cognito | Authenticated read API and user sign-in | Browser tokens require XSS protections; hosted login is an external dependency |
@@ -14,7 +14,8 @@
 | EventBridge | Daily drift schedule and failed-pipeline events | Schedule disabled initially; drift and model performance are different signals |
 | CloudWatch + SNS | Failure/lag alarms and operations event routing | No delivered alert exists until a confirmed subscription is configured and tested |
 | SQS | Failed stream-batch investigation metadata | Not a complete archive of all original records |
-| CodePipeline + CodeBuild | GitHub-sourced tests, review and deployment | Source installation and real AWS pipeline execution are still pending cloud validation |
+| CodePipeline + CodeBuild | GitHub-sourced tests, review and deployment | Main AWS pipeline remains unrun; separate CodeBuild Docker tests and ECR scanning succeeded |
 
 A persistent SageMaker endpoint, managed Spark cluster, OpenSearch domain, NAT Gateway, Glue crawler and extra database are intentionally absent because they would not improve the bounded demonstration enough to justify cost or complexity.
 
+The service map above describes the complete source architecture. Actual AWS execution used only the isolated CodeBuild/ECR/S3/IAM/logging bootstrap, which was removed after verification. The [published Pages dashboard](pages-preview.md) is hosted separately and blocks AWS connection requests.

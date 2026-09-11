@@ -22,5 +22,6 @@ The batch script rejects a pending or rejected package before creating infrastru
 
 ## Verification status
 
-The configuration and scripts were validated locally as recorded in testing. No actual GitHub-triggered CodePipeline execution, ECR scan, deployment, SageMaker execution or rollback has been run by this implementation task. Capture those results during the authorized cloud acceptance phase.
+The main GitHub-triggered AWS CodePipeline, application deployment, SageMaker execution and rollback remain unrun. Separately, the isolated AWS CodeBuild bootstrap ran three actual Docker builds: two Debian images failed the strict vulnerability gate, then the Alpine image passed functional tests and completed ECR scanning with zero reported findings. Its temporary infrastructure was removed with absence verified. See [container evidence](container-build.md).
 
+The separate static dashboard workflow [34569734895](https://github.com/aliadiill/streamml/actions/runs/34569734895) succeeded and published the [browser-verified Pages preview](https://aliadiill.github.io/streamml/). It uses the `github-pages` deployment environment, requires no AWS credentials, and blocks AWS connection requests. See [Pages delivery and verification](pages-preview.md).

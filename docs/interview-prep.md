@@ -2,7 +2,7 @@
 
 ## 30 seconds
 
-StreamML is a transaction analytics and MLOps engineering lab. A deterministic producer feeds Kinesis; Lambda validates and deduplicates events into S3 and DynamoDB; an authenticated React dashboard reads operational metrics. A real SageMaker pipeline performs chronological preprocessing, logistic training, held-out evaluation and gated registration. Inference requires human approval and runs as a bounded batch. Local code and tests are verified; cloud execution remains a separate acceptance phase.
+StreamML is a transaction analytics and MLOps engineering lab. Its source defines Kinesis ingestion, retry-safe Lambda processing, private storage, an authenticated dashboard and gated SageMaker Pipelines. I verified the code locally and ran the actual Docker preprocessing, training, evaluation and HTTP inference on AWS CodeBuild. Two image scans blocked release before an Alpine correction passed. I removed the temporary AWS infrastructure after preserving evidence and published a labelled static dashboard. The full Kinesis/SageMaker integration remains blocked by account eligibility and quotas.
 
 ## One minute
 
@@ -12,7 +12,7 @@ On the ML side, the training set fits the scaler and coefficients, validation se
 
 ## Five-minute discussion outline
 
-Explain the payments-operations problem and synthetic-data limitation. Trace one record through validation, canonical S3, DynamoDB transaction and dashboard. Walk through duplicate and partial-failure cases. Then show the chronological split, actual local confusion matrix, DAG gate and manual registry approval. Finish with batch inference, drift's two-breach/cooldown controls, the Kinesis account eligibility blocker, cost limits and the unrun cloud acceptance checklist.
+Explain the payments-operations problem and synthetic-data limitation. Trace the implemented record path through validation, canonical S3, DynamoDB transaction and dashboard. Walk through tested duplicate and partial-failure cases. Show the chronological split and actual confusion matrix reproduced inside Docker, then the designed DAG gate and pending registry approval. Discuss the two failed vulnerability scans, successful Alpine correction, verified AWS teardown and published Pages preview. Finish with the unrun batch/drift integrations, Kinesis account blocker and cost constraints.
 
 ## Questions and answers
 
@@ -34,5 +34,4 @@ Explain the payments-operations problem and synthetic-data limitation. Trace one
 
 **How would it scale?** Partition and compact raw files, shard hot metric buckets, reconsider the global recent-feed index, increase streaming capacity from measured demand and add load/integration tests.
 
-**What remains unverified?** Live cloud integration, IAM negative tests, real pipeline executions, notification delivery, recovery and teardown. The repository's results distinguish these from actual local tests.
-
+**What remains unverified?** Full Kinesis-to-Lambda ingestion, Cognito integration, IAM negative tests, SageMaker and main CodePipeline executions, notification delivery and full-stack recovery. The isolated AWS Docker execution, ECR scan, bootstrap teardown and public Pages deployment have actual verified evidence.

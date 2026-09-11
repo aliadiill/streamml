@@ -34,11 +34,13 @@ Alpine reduces this workload's dependency surface, but it is a tradeoff: package
 
 See [sanitized execution evidence](evidence/container-execution.json) for observed attempt statuses, digests, scan counts and metrics. Account-specific logs and artifacts remain private. Cleanup is recorded only after exact bootstrap resources are verified removed.
 
+The teardown ownership check initially rejected a manually shortened expected image tag before deleting anything. Expected tags were then read directly from the saved source manifests and cross-checked against the three recorded digests. The exact six owned object versions and three images were removed, followed by a reviewed destroy-only plan for the twelve remaining Terraform resources. The source object accounted for the thirteenth managed resource. At 06:23:58 UTC, AWS verified the repository, bucket, project, role and logs absent, and the local state had zero managed resources. All known builds were terminal or removed. This removed the temporary demonstration storage and compute path after its evidence was preserved.
+
 ## The public preview has a different purpose from the AWS application
 
 The GitHub Pages build uses `/streamml/`, opens directly into clearly labelled sample data and disables login, token processing and API polling. Its browser policy also sets `connect-src 'none'`, preventing fetch/WebSocket connections. No credentials or AWS configuration are needed to publish it. The normal application build retains authenticated AWS integration code.
 
-The Pages workflow builds an artifact, verifies its repository path and network policy, and deploys through a `github-pages` environment so GitHub records deployment history. Source configuration and local build success are documented separately from an actual successful Pages deployment. The workflow follows [GitHub's custom Pages workflow guidance](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+The Pages workflow builds an artifact, verifies its repository path and network policy, and deploys through a `github-pages` environment so GitHub records deployment history. [Run 34569734895](https://github.com/aliadiill/streamml/actions/runs/34569734895) succeeded for commit `fc2a698`. The browser then verified the [published preview](https://aliadiill.github.io/streamml/), its automatic sample labels, dashboard and navigation; the [actual capture](screenshots/streamml-github-pages.png) is public. This establishes successful static-site publication separately from the completed AWS Docker test and the unrun full stack. The workflow follows [GitHub's custom Pages workflow guidance](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
 ## What the model does not establish
 

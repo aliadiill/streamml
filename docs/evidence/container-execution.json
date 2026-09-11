@@ -7,7 +7,7 @@
     "deleted": 0,
     "compute": "BUILD_GENERAL1_SMALL",
     "build_timeout_minutes": 10,
-    "state": "deployed temporarily; evidence capture pending cleanup"
+    "state": "destroyed; AWS absence and empty local Terraform state verified"
   },
   "attempts": [
     {
@@ -206,5 +206,24 @@
     "No SageMaker pipeline or full streaming application execution",
     "Scanner results are a dated observation of the tested digest, not a permanent vulnerability guarantee",
     "Synthetic held-out data is not independent real-world fraud validation"
-  ]
+  ],
+  "teardown": {
+    "timestamp_utc": "2026-09-11T06:23:58.658358+00:00",
+    "ecr_repository": "verified absent",
+    "artifact_bucket": "verified absent",
+    "iam_build_role": "verified absent",
+    "codebuild_project": "verified absent",
+    "cloudwatch_log_group": "verified absent",
+    "known_builds_running": 0,
+    "known_builds_terminal_or_removed": 3,
+    "terraform_managed_resources_remaining": 0,
+    "removed_object_versions": 6,
+    "removed_images": 3,
+    "remaining_object_versions": 0,
+    "remaining_images": 0,
+    "builds_terminal": true,
+    "terraform_destroyed": 12,
+    "managed_source_object_removed_before_destroy": true,
+    "full_streamml_infrastructure_applied": false
+  }
 }

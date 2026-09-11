@@ -1,0 +1,24 @@
+{
+  "verified_date_utc": "2026-09-11",
+  "website_url": "https://aliadiill.github.io/streamml/",
+  "workflow_url": "https://github.com/aliadiill/streamml/actions/runs/34569734895",
+  "workflow_run_id": "34569734895",
+  "workflow_conclusion": "success",
+  "published_commit_short": "fc2a698",
+  "environment": "github-pages",
+  "verification_source": "Lead agent observed the successful GitHub workflow and verified the published page in the browser; documentation reviewer inspected the saved screenshot",
+  "browser_checks": {
+    "dashboard_rendered": true,
+    "automatic_sample_mode": true,
+    "sample_and_portfolio_labels_visible": true,
+    "navigation_verified": true
+  },
+  "local_artifact_checks": {
+    "repository_asset_base": "/streamml/",
+    "connection_policy": "connect-src 'none'",
+    "normal_and_pages_production_builds": "passed"
+  },
+  "public_screenshot": "docs/screenshots/streamml-github-pages.png",
+  "scope": "Published static portfolio preview with illustrative synthetic data; separate from the verified and removed AWS Docker bootstrap",
+  "full_kinesis_sagemaker_deployment": "unapplied; account eligibility and selected job quotas block the full stack"
+}

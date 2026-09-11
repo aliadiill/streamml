@@ -2,7 +2,9 @@
 
 ## Eligibility and boundaries
 
-No AWS apply was run by the implementation agent. The lead's current account checks returned a Kinesis subscription/plan restriction. The owner requires zero personal spending and permits at most USD 100 total promotional-credit use. A paid plan upgrade is not authorized. The complete stack must remain undeployed while Kinesis is unavailable under those constraints. The steps below are a reproducible deployment runbook for an eligible environment, not an instruction to apply in the currently restricted account. This repository does not change the account's plan, billing, organization, or administrative users.
+The full StreamML Terraform root remains unapplied because account checks returned a Kinesis subscription/plan restriction. A separate [container-test bootstrap](container-build.md) was applied, successfully ran real Docker ML/HTTP checks and ECR scanning, and was then fully removed with absence verified. The [static Pages preview](pages-preview.md) is published and browser-verified. Neither demonstration establishes the full streaming integration.
+
+The owner requires zero personal spending and permits at most USD 100 total promotional-credit use. A paid plan upgrade is not authorized. The complete stack must remain undeployed while Kinesis is unavailable under those constraints. The steps below are a reproducible deployment runbook for an eligible environment, not an instruction to apply in the currently restricted account. This repository does not change the account's plan, billing, organization, or administrative users.
 
 Use `us-east-1` and short-lived IAM/federated credentials. Confirm Kinesis availability, SageMaker Processing/Training/Transform quotas for `ml.m5.large`, Lambda concurrency, remaining credits and an intended teardown time. No credentials belong in Terraform variables or Git.
 

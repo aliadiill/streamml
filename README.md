@@ -2,17 +2,21 @@
 
 **Transaction intelligence with a real, gated machine-learning workflow.**
 
+[Open the verified portfolio preview](https://aliadiill.github.io/streamml/) · [Successful Pages deployment](https://github.com/aliadiill/streamml/actions/runs/34569734895)
+
 StreamML connects a bounded synthetic transaction generator to Kinesis, retry-safe Lambda processing, a private S3 data lake, DynamoDB metrics, an authenticated React dashboard, and SageMaker Pipelines. It answers two different operational questions: *what is happening in the stream now?* and *is a new model good enough to use?*
 
 **Current status:** source implementation and local verification are complete as recorded in [testing](docs/testing.md). An isolated AWS CodeBuild deployment **passed real Docker ML/HTTP tests and a completed ECR scan with zero reported findings**. Two earlier Debian images failed the unchanged security gate; the final Alpine correction succeeded. Full streaming deployment, authenticated cloud integration, actual SageMaker execution and the main CI/CD pipeline remain **unverified**. The learning account returned a Kinesis subscription/plan restriction; this project does not change the account plan. See the [actual container proof](docs/container-build.md).
 
 **Cost constraint:** the owner permits at most **USD 100 total promotional-credit use**, with **zero personal/out-of-pocket spending now or later**. Keep the Free plan; no paid upgrade is authorized. The complete Kinesis-based stack therefore remains undeployed while that service is unavailable. Do not run the full Terraform apply under the current restriction.
 
-![StreamML local dashboard with illustrative sample data](docs/screenshots/streamml-sample-dashboard.png)
+The temporary container-test bootstrap was fully removed after evidence capture. AWS checks verified its image repository, artifact bucket, build project, role and log group absent; no known build remained running. Source and results remain available here.
 
-*Actual local interface capture, 2026-09-11. Values are illustrative sample data, not a live AWS streaming result.*
+![StreamML published GitHub Pages dashboard with labelled sample data](docs/screenshots/streamml-github-pages.png)
 
-[Model governance and transaction feed — actual local preview](docs/screenshots/streamml-governance-preview.png).
+*Actual browser capture of the published GitHub Pages preview, verified 2026-09-11. Values are illustrative sample data. The preview disables AWS connections; its deployment is separate from the completed AWS Docker demonstration.*
+
+[Earlier local dashboard](docs/screenshots/streamml-sample-dashboard.png) · [Model governance and transaction feed — actual local preview](docs/screenshots/streamml-governance-preview.png).
 
 ## Business problem
 
@@ -108,4 +112,4 @@ See [operations](docs/monitoring.md), [teardown and cost](docs/cost.md), and [kn
 | `tests/` | Failure, replay, validation, ML leakage/gate and API-shape tests |
 | `docs/` | Architecture, decisions, runbooks, evidence and interview explanations |
 
-No real AWS console screenshots or successful cloud executions are implied by this repository. [Evidence guide](docs/screenshots/README.md).
+Verified results include the published GitHub Pages preview and an isolated AWS CodeBuild Docker execution, completed ECR scan and bootstrap teardown. Full Kinesis ingestion, the authenticated AWS dashboard, SageMaker execution and the main CodePipeline remain unapplied or unrun. The [evidence guide](docs/screenshots/README.md) identifies each screenshot and execution record.

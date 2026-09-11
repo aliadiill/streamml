@@ -19,7 +19,9 @@ The independent CodeBuild container bootstrap also passed Terraform initializati
 
 The independent bootstrap applied a reviewed 13-resource create-only plan. Three real ten-minute-capped CodeBuild executions ran Docker preprocessing, training, held-out evaluation, deliberate bad-model rejection and HTTP inference successfully. The first two Debian attempts failed the ECR gate with 6 critical and 11 high findings. The final Alpine attempt **SUCCEEDED**, with the same functional checks and a **COMPLETE ECR scan reporting zero findings**. The same held-out metrics below were reproduced inside all three containers. Actual attempts and exact digests are preserved in the [container proof](container-build.md) and [sanitized evidence](evidence/container-execution.json). This validates an actual Docker workload on AWS CodeBuild; it does not establish a SageMaker Pipeline execution or the full streaming integration.
 
-The separate Pages and normal dashboard production builds both passed. The Pages artifact passed checks for `/streamml/` asset paths and its browser connection-blocking policy. Live Pages deployment remains a separate check.
+The separate Pages and normal dashboard production builds both passed. The Pages artifact passed checks for `/streamml/` asset paths and its browser connection-blocking policy. The [Pages workflow 34569734895](https://github.com/aliadiill/streamml/actions/runs/34569734895) then **SUCCEEDED** for commit `fc2a698`. A real browser check verified the [published preview](https://aliadiill.github.io/streamml/), its automatic sample-mode labels, dashboard and navigation. [Screenshot](screenshots/streamml-github-pages.png) and [deployment evidence](evidence/pages-deployment.json) preserve that distinct result.
+
+The isolated bootstrap teardown was verified at 06:23:58 UTC: its ECR repository, artifact bucket, build project, IAM role and log group were absent; all known builds were terminal or removed, and its Terraform state had zero managed resources. This is completed teardown evidence for the container demonstration only; the unrun full-stack recovery checklist below remains separate.
 
 ## Deterministic ML result
 
