@@ -2,17 +2,17 @@
 
 ## 30 seconds
 
-StreamML is a transaction analytics and MLOps engineering lab. Its source defines Kinesis ingestion, retry-safe Lambda processing, private storage, an authenticated dashboard and gated SageMaker Pipelines. I verified the code locally and ran the actual Docker preprocessing, training, evaluation and HTTP inference on AWS CodeBuild. Two image scans blocked release before an Alpine correction passed. I removed the temporary AWS infrastructure after preserving evidence and published a labelled static dashboard. The full Kinesis/SageMaker integration remains blocked by account eligibility and quotas.
+I built StreamML as a transaction analytics and MLOps engineering lab. I implemented Kinesis ingestion, retry-safe Lambda processing, private storage, an authenticated dashboard and gated SageMaker Pipelines. I verified the code locally and ran the actual Docker preprocessing, training, evaluation and HTTP inference on AWS CodeBuild. Two image scans blocked release before an Alpine correction passed. I removed the temporary AWS infrastructure after preserving evidence and published a labelled static dashboard. The full Kinesis/SageMaker integration remains blocked by account eligibility and quotas.
 
 ## One minute
 
-The most interesting problem is correctness under retries. The processor first writes a canonical S3 event with a conditional content hash, then commits a DynamoDB dedup marker and counters together. If the process fails between systems, the same event can finish safely on retry. I explicitly limit the guarantee to the marker's seven-day retention.
+The problem I focused on most was correctness under retries. The processor first writes a canonical S3 event with a conditional content hash, then commits a DynamoDB dedup marker and counters together. If the process fails between systems, the same event can finish safely on retry. I explicitly limit the guarantee to the marker's seven-day retention.
 
 On the ML side, the training set fits the scaler and coefficients, validation selects the threshold, and a newer test set decides whether the candidate meets quality/support criteria. Passing quality registers PendingManualApproval; it does not deploy. This gives me a concrete way to explain the differences among app CI/CD, infrastructure delivery, model quality and MLOps.
 
 ## Five-minute discussion outline
 
-Explain the payments-operations problem and synthetic-data limitation. Trace the implemented record path through validation, canonical S3, DynamoDB transaction and dashboard. Walk through tested duplicate and partial-failure cases. Show the chronological split and actual confusion matrix reproduced inside Docker, then the designed DAG gate and pending registry approval. Discuss the two failed vulnerability scans, successful Alpine correction, verified AWS teardown and published Pages preview. Finish with the unrun batch/drift integrations, Kinesis account blocker and cost constraints.
+I begin with the payments-operations scenario and synthetic-data limitation, then trace my implemented validation, canonical S3 write and DynamoDB transaction. I show tested duplicate/failure cases and the confusion matrix I reproduced inside Docker. I explain the designed DAG and model approval controls, the two failed scans, my Alpine correction, verified teardown and published Pages preview. I finish with the batch/drift integrations I have not run and the account and cost limits that shaped the experiment.
 
 ## Questions and answers
 
@@ -34,4 +34,4 @@ Explain the payments-operations problem and synthetic-data limitation. Trace the
 
 **How would it scale?** Partition and compact raw files, shard hot metric buckets, reconsider the global recent-feed index, increase streaming capacity from measured demand and add load/integration tests.
 
-**What remains unverified?** Full Kinesis-to-Lambda ingestion, Cognito integration, IAM negative tests, SageMaker and main CodePipeline executions, notification delivery and full-stack recovery. The isolated AWS Docker execution, ECR scan, bootstrap teardown and public Pages deployment have actual verified evidence.
+**What remains unverified?** I have not tested full Kinesis-to-Lambda ingestion, Cognito integration, IAM negative tests, SageMaker and main CodePipeline executions, notification delivery and full-stack recovery. I have verified the isolated AWS Docker execution, ECR scan, temporary-infrastructure teardown and public Pages deployment.

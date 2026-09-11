@@ -1,4 +1,6 @@
-# Why these AWS services
+# Why I chose these AWS services
+
+I selected this service mix to connect streaming, reliable ingestion and controlled model release while keeping the lab small.
 
 | Service | Problem it solves | Tradeoff and limit |
 | --- | --- | --- |
@@ -16,6 +18,6 @@
 | SQS | Failed stream-batch investigation metadata | Not a complete archive of all original records |
 | CodePipeline + CodeBuild | GitHub-sourced tests, review and deployment | Main AWS pipeline remains unrun; separate CodeBuild Docker tests and ECR scanning succeeded |
 
-A persistent SageMaker endpoint, managed Spark cluster, OpenSearch domain, NAT Gateway, Glue crawler and extra database are intentionally absent because they would not improve the bounded demonstration enough to justify cost or complexity.
+I omitted a persistent SageMaker endpoint, Spark cluster, OpenSearch domain, NAT Gateway, Glue crawler and extra database because they did not justify their cost or complexity for this experiment.
 
-The service map above describes the complete source architecture. Actual AWS execution used only the isolated CodeBuild/ECR/S3/IAM/logging bootstrap, which was removed after verification. The [published Pages dashboard](pages-preview.md) is hosted separately and blocks AWS connection requests.
+I implemented the complete architecture described above. My actual AWS test used the isolated CodeBuild/ECR/S3/IAM/logging configuration, which I removed after verification. The [published Pages dashboard](pages-preview.md) is hosted separately and blocks AWS connection requests.

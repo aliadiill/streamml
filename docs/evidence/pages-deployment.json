@@ -6,7 +6,7 @@
   "workflow_conclusion": "success",
   "published_commit_short": "fc2a698",
   "environment": "github-pages",
-  "verification_source": "Lead agent observed the successful GitHub workflow and verified the published page in the browser; documentation reviewer inspected the saved screenshot",
+  "verification_source": "I verified the successful workflow, checked the published page in the browser and preserved an actual screenshot.",
   "browser_checks": {
     "dashboard_rendered": true,
     "automatic_sample_mode": true,

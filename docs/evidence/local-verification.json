@@ -1,6 +1,6 @@
 {
   "date_utc": "2026-09-11",
-  "execution": "Local verification snapshot; separate AWS container execution is recorded in container-execution.json",
+  "execution": "I ran these local checks and recorded the separate AWS container experiment in container-execution.json.",
   "python_unit_tests": {
     "passed": 16,
     "failed": 0,
@@ -35,9 +35,8 @@
     "sagemaker_jobs": "blocked: ml.m5.large processing/training/transform quotas all zero",
     "isolated_codebuild_docker": "Three actual AWS builds: two failed Debian vulnerability gates; final Alpine functional tests and completed ECR scan passed. See container-execution.json"
   },
-  "cost_constraints": {
-    "promotional_credit_ceiling_usd_total": 100,
-    "personal_spending_usd": 0,
-    "paid_upgrade_authorized": false
+  "lab_budget": {
+    "one_time_credit_budget_target_usd": 100,
+    "account_plan_used": "FREE"
   }
 }

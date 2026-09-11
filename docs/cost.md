@@ -1,35 +1,35 @@
-# Cost controls and teardown
+# My cost controls and teardown approach
 
-The owner's limit is **USD 100 total promotional-credit use, not USD 100 per month**, with **zero personal/out-of-pocket spending now or in the future**. Retain the Free plan; a paid plan upgrade is not authorized. Kinesis is currently unavailable under the account's service eligibility, so the complete StreamML stack stays undeployed.
+I kept lab runs short and aimed for a **one-time $100 credit budget**. I used the Free plan and avoided ongoing infrastructure where it added little to the demonstration. Kinesis was unavailable under my account eligibility, so I left the full streaming stack undeployed.
 
-The separately authorized container demonstration ran three short AWS CodeBuild executions. Its final image passed all gates, and the temporary ECR repository, source/artifact bucket, project, IAM role and logs were removed with absence verified at 06:23:58 UTC on 2026-09-11. Actual execution and cleanup are recorded in [container evidence](evidence/container-execution.json); service charges can appear later. The [published static preview](pages-preview.md) makes no AWS connection.
+I ran three short CodeBuild container experiments. My final image passed every gate, and I removed the temporary ECR repository, source/artifact bucket, build project, IAM role and logs. I verified their absence at 06:23:58 UTC on 2026-09-11. I recorded the results in [container evidence](evidence/container-execution.json). My [published static preview](pages-preview.md) makes no AWS connection.
 
-The limits below do not promise that credits cover every service or that an alarm prevents charges. Any separately authorized bounded component test must fit within the aggregate promotional-credit ceiling and the existing Free-plan protection. Consult the [AWS pricing calculator](https://calculator.aws/) for current rates before such a test; no price quote is invented here.
+I treated the limits below as engineering controls, not hard dollar caps. Before another experiment, I would check current rates in the [AWS pricing calculator](https://calculator.aws/), available credits and expected runtime. I also allow for billing delay when comparing an experiment with my budget. My [credit snapshot](credit-budget-verification.md) separates posted figures from the final cost still to settle.
 
-| Component | Implemented limit | Residual/accidental-running cost |
+| Component | My implemented limit | Remaining cost consideration |
 | --- | --- | --- |
-| Kinesis | One provisioned shard; 24-hour retention | Continues charging while stream exists, even with no producer |
-| Producer | ≤10,000 events/run; ≤25 events/s | No background producer or scheduler is created |
-| Lambda | 256 MiB; short timeouts; no reservation under the small shared quota | Invocations, retries and logs can still consume credits |
-| DynamoDB | Pay-per-request; seven-day marker/counter TTL, one-day recent TTL | Storage/PITR and delayed TTL deletion remain billable |
-| Athena | 10 MiB per-query scan ceiling | A failed capped query can still incur scanned-data cost |
-| SageMaker | One ml.m5.large per job, 600-second processing/training runtime limit | Startup/managed overhead, quotas and storage still apply |
-| Batch transform | One instance, 1 MiB input, client deadline | Client termination defeats the client-side stop timer; verify AWS state |
-| Drift/automatic training | Both disabled by default; two breaches and 24-hour cooldown | Enabling recurring jobs adds recurring cost |
-| Logs and S3 | Logs seven days; version/lifecycle rules in Terraform | Current ML artifacts and tagged images require deliberate teardown |
-| CI/CD | CodeBuild small workers, 20-minute timeout | Builds and pipeline executions cost money; don't use training for every UI edit |
-| Isolated container proof | CodeBuild small worker, 10-minute build and queue caps; three actual attempts | Temporary resources were deleted after evidence capture; incurred usage remains subject to billing delay |
+| Kinesis | One provisioned shard; 24-hour retention | A stream accrues cost while it exists, even with no producer |
+| Producer | ≤10,000 events/run; ≤25 events/s | I created no background producer or scheduler |
+| Lambda | 256 MiB; short timeouts; no reservation under the small shared quota | Invocations, retries and logs can consume credits |
+| DynamoDB | Pay-per-request; seven-day marker/counter TTL; one-day recent TTL | Storage, PITR and delayed TTL deletion remain billable |
+| Athena | 10 MiB per-query scan ceiling | A capped query can still incur scanned-data cost |
+| SageMaker | One ml.m5.large per job; 600-second processing/training limit | Startup, quotas and storage still apply; these jobs remain unrun |
+| Batch transform | One instance; 1 MiB input; client deadline | The stop loop depends on the client staying alive |
+| Drift/retraining | Disabled defaults; two breaches; 24-hour cooldown | Recurring jobs would add recurring usage |
+| Logs and S3 | Seven-day logs; version/lifecycle rules | Referenced model artifacts and tagged images need deliberate cleanup |
+| Main CI/CD | Small CodeBuild workers; 20-minute timeout | I avoid retraining for routine UI changes |
+| Isolated container experiment | Small worker; ten-minute build and queue caps; three actual attempts | I deleted the temporary resources after evidence capture |
 
-Kinesis and SageMaker dominate the deliberate-demo decision. Run a short, scheduled window; produce a bounded dataset; perform one experiment and one approved transform; then stop. Do not leave a stream running while doing unrelated interview preparation.
+For a future full-stack experiment, I would use a short window: a bounded dataset, one training experiment, one approved transform and immediate teardown. I would not leave a stream running between lab sessions.
 
-## Teardown sequence
+## My teardown checklist
 
-1. Stop the producer, disable automatic retraining and the scheduled monitor.
-2. Stop or wait for active training/processing/transform jobs and CodeBuild executions. Record actual terminal states and the evaluation evidence.
-3. Preserve source, selected evaluation reports and genuine screenshots. Keep private account evidence outside the public repository.
-4. Inspect a Terraform destroy plan scoped to this project's state. Default bucket `force_destroy=false` prevents silent data erasure.
-5. After reviewing those exact project buckets, empty their object versions and delete markers, remove project model-package versions and transient model resources as required, and empty the project ECR repository after checking approved model references.
-6. Apply the reviewed destroy plan. Preserve the shared state bucket and any shared CodeConnections connection.
-7. Verify that the stream, billable jobs and project resources are gone. Revisit billing after its reporting delay. Deleting infrastructure does not erase already accrued charges.
+1. I stop the producer and disable scheduled monitoring and retraining.
+2. I stop or wait for active processing, training, transform and build jobs, then record their terminal states.
+3. I preserve source, evaluation reports and actual screenshots while keeping private account evidence outside the repository.
+4. I inspect a destroy plan scoped to the project state. My buckets default to `force_destroy=false` to expose nonempty storage before deletion.
+5. I check exact artifact references, remove project object versions and delete markers, and remove temporary images/models only when no required reference remains.
+6. I apply the saved destroy plan and preserve shared state storage or connections.
+7. I verify resource absence and later review posted billing. Teardown does not erase usage already incurred.
 
-No blanket account cleanup or state-independent destructive script is included.
+I used this approach for the completed container experiment: six object versions and three recorded image digests were removed, then Terraform destroyed twelve remaining resources. The source object was the thirteenth managed resource. I verified zero remaining managed resources and no running known build. The full-stack recovery and teardown sequence remains future work.

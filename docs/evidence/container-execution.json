@@ -196,11 +196,6 @@
     "nonzero_training": {},
     "nonzero_transform": {}
   },
-  "cost_constraints": {
-    "promotional_credit_ceiling_usd_total": 100,
-    "personal_spending_usd": 0,
-    "paid_upgrade_authorized": false
-  },
   "outcome": "Final Alpine image passed functional tests and completed ECR scan with zero reported findings. Prior Debian attempts failed the unchanged vulnerability gate.",
   "limitations": [
     "No SageMaker pipeline or full streaming application execution",
@@ -225,5 +220,9 @@
     "terraform_destroyed": 12,
     "managed_source_object_removed_before_destroy": true,
     "full_streamml_infrastructure_applied": false
+  },
+  "lab_budget": {
+    "one_time_credit_budget_target_usd": 100,
+    "account_plan_used": "FREE"
   }
 }

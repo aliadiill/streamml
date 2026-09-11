@@ -1,6 +1,6 @@
 # Screenshot evidence
 
-All screenshots listed here are actual browser captures from 2026-09-11, with illustrative data clearly labelled.
+I captured these screenshots in the browser on 2026-09-11 and labelled the illustrative data clearly.
 
 | Capture | What was verified |
 | --- | --- |
@@ -8,8 +8,8 @@ All screenshots listed here are actual browser captures from 2026-09-11, with il
 | [Earlier local dashboard](streamml-sample-dashboard.png) | The running local React interface displayed its labelled sample metrics and transactions. |
 | [Local governance and transaction feed](streamml-governance-preview.png) | The local preview displayed the workflow design and illustrative transaction feed. |
 
-The independent AWS CodeBuild demonstration also completed real Docker preprocessing, training, quality rejection, HTTP predictions and a successful ECR scan after two failed Debian-image gates. Its [sanitized execution and teardown evidence](../evidence/container-execution.json) preserves all three attempts and verified resource removal. The actual AWS build-history screenshot and detailed logs remain private because they include account-specific identifiers. These results do not claim a full Kinesis or SageMaker deployment.
+I also completed an independent AWS CodeBuild demonstration with real Docker preprocessing, training, quality rejection, HTTP predictions and a successful ECR scan after two failed Debian-image gates. Its [sanitized execution and teardown evidence](../evidence/container-execution.json) preserves all three attempts and verified resource removal. I kept the AWS build-history screenshot and detailed logs private because they include account-specific identifiers. I have not deployed the full Kinesis or SageMaker stack.
 
-During any future authorized full-stack cloud acceptance, capture the authenticated dashboard, private storage configuration, stream counters, an actual CodePipeline run, SageMaker graph, quality report, pending registry package, approved batch output, and rejection/failure behavior. Those tests remain unrun. Mask account IDs, tokens, email addresses and unnecessary resource identifiers before publishing.
+For my future full-stack cloud tests, I would capture the authenticated dashboard, private storage configuration, stream counters, an actual CodePipeline run, SageMaker graph, quality report, pending registry package, approved batch output, and rejection/failure behavior. Those tests remain unrun. I redact account IDs, tokens, email addresses and unnecessary resource identifiers before publication.
 
-Do not fabricate a successful pipeline screenshot from the architecture diagram. The diagram describes the implemented design; an execution screenshot describes a real observed run.
+I use architecture diagrams to explain my design and execution screenshots to show observed runs. I keep those evidence types separate.

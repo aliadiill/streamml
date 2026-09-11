@@ -1,28 +1,28 @@
 # StreamML
 
-**Transaction intelligence with a real, gated machine-learning workflow.**
+**My transaction analytics and MLOps portfolio project — Ali Adil.**
 
 [Open the verified portfolio preview](https://aliadiill.github.io/streamml/) · [Successful Pages deployment](https://github.com/aliadiill/streamml/actions/runs/34569734895)
 
-StreamML connects a bounded synthetic transaction generator to Kinesis, retry-safe Lambda processing, a private S3 data lake, DynamoDB metrics, an authenticated React dashboard, and SageMaker Pipelines. It answers two different operational questions: *what is happening in the stream now?* and *is a new model good enough to use?*
+I built StreamML to connect transaction analytics with a controlled machine-learning workflow. I implemented a bounded synthetic producer, Kinesis integration, retry-safe Lambda processing, a private S3 data lake, DynamoDB metrics, an authenticated React dashboard and a SageMaker Pipelines definition. I wanted to answer two operational questions: *what is happening in the stream now?* and *is a new model good enough to use?*
 
-**Current status:** source implementation and local verification are complete as recorded in [testing](docs/testing.md). An isolated AWS CodeBuild deployment **passed real Docker ML/HTTP tests and a completed ECR scan with zero reported findings**. Two earlier Debian images failed the unchanged security gate; the final Alpine correction succeeded. Full streaming deployment, authenticated cloud integration, actual SageMaker execution and the main CI/CD pipeline remain **unverified**. The learning account returned a Kinesis subscription/plan restriction; this project does not change the account plan. See the [actual container proof](docs/container-build.md).
+**What I verified:** my [local tests](docs/testing.md), published Pages dashboard and isolated AWS CodeBuild deployment. The AWS run **passed Docker ML/HTTP tests and completed ECR scanning with zero reported findings**. I preserved two failed Debian-image scans, then fixed the base-image issue with Alpine while keeping the security gate unchanged. I have **not deployed the full streaming stack or run SageMaker or the main CodePipeline**: Kinesis eligibility and job quotas blocked that part of the lab. My [container evidence](docs/container-build.md) records the successful bounded AWS experiment.
 
-**Cost constraint:** the owner permits at most **USD 100 total promotional-credit use**, with **zero personal/out-of-pocket spending now or later**. Keep the Free plan; no paid upgrade is authorized. The complete Kinesis-based stack therefore remains undeployed while that service is unavailable. Do not run the full Terraform apply under the current restriction.
+**My cost approach:** I kept lab runs short and aimed for a **one-time $100 credit budget**. I used the Free plan, avoided always-on inference, and left the complete Kinesis-based stack undeployed when the service was unavailable. My [cost notes](docs/cost.md) explain the controls and billing delay, and my [shared project cost report](docs/cost-report.md) records the broader budget picture.
 
-The temporary container-test bootstrap was fully removed after evidence capture. AWS checks verified its image repository, artifact bucket, build project, role and log group absent; no known build remained running. Source and results remain available here.
+I removed the temporary container-test infrastructure after capturing the evidence. I verified that its image repository, artifact bucket, build project, role and log group were absent and that no known build remained running. I kept the source, metrics and failure history in this portfolio.
 
 ![StreamML published GitHub Pages dashboard with labelled sample data](docs/screenshots/streamml-github-pages.png)
 
-*Actual browser capture of the published GitHub Pages preview, verified 2026-09-11. Values are illustrative sample data. The preview disables AWS connections; its deployment is separate from the completed AWS Docker demonstration.*
+*I captured and verified this published GitHub Pages preview on 2026-09-11. I labelled the values as sample data and disabled AWS connections in this build. My AWS Docker experiment has separate execution evidence.*
 
 [Earlier local dashboard](docs/screenshots/streamml-sample-dashboard.png) · [Model governance and transaction feed — actual local preview](docs/screenshots/streamml-governance-preview.png).
 
 ## Business problem
 
-A payment-operations team needs a live view of transaction volume and risky activity, while the model team needs reproducible training and controlled releases. A model should not be promoted because a notebook ran successfully. StreamML separates ingestion correctness, operational business rules, held-out model quality, human approval, and inference resource creation.
+I used a payments-operations scenario to connect transaction visibility with reproducible training and controlled releases. I separated ingestion correctness, business rules, held-out model quality, human model approval and inference creation so that a successful training run alone cannot promote a model.
 
-The dataset uses fictional card identifiers and synthetic labels. It contains no card numbers, credentials, names, or real payments. This is an engineering lab, not a validated financial fraud model.
+I generated fictional card identifiers and synthetic labels without real card numbers, names or payments. I use this dataset to demonstrate engineering behavior; I have not validated the model for financial fraud detection.
 
 ## Architecture
 
@@ -52,15 +52,15 @@ flowchart LR
   DR -. two breaches + cooldown .-> PR
 ```
 
-Read the [architecture](docs/architecture.md), [ML design](docs/ml-design.md), [security](docs/security.md), and [service tradeoffs](docs/aws-services.md).
+I explain my choices in the [architecture](docs/architecture.md), [ML design](docs/ml-design.md), [security](docs/security.md), and [service tradeoffs](docs/aws-services.md).
 
-The [build journal](docs/build-journal.md) records real blockers, failed image scans, corrective attempts and model limitations. The [Pages preview guide](docs/pages-preview.md) explains the separate static demonstration and its deployment history.
+My [build journal](docs/build-journal.md) records blockers, failed image scans, corrective attempts and model limitations. My [Pages guide](docs/pages-preview.md) covers the static demonstration and its deployment history.
 
-For a separately approved Docker demonstration without Kinesis or SageMaker jobs, use the isolated [CodeBuild container proof](docs/container-build.md). It runs the real container preprocessing, training, evaluation, bad-model rejection and HTTP inference entrypoints under a ten-minute build limit. An actual build result remains separate from a SageMaker execution.
+I used the isolated [CodeBuild container experiment](docs/container-build.md) to test preprocessing, training, evaluation, bad-model rejection and HTTP inference under a ten-minute build limit. This gave me AWS container evidence while the SageMaker execution remained blocked.
 
 ## Run locally
 
-Use Python 3.11+, Node 20.19+ or a supported newer Node release, npm, Terraform 1.10+, and Docker for the optional SageMaker container build.
+I made the project reproducible with Python 3.11+, Node 20.19+ or a supported newer release, npm and Terraform 1.10+. Docker is needed for a local container build. My local setup sequence is:
 
 ```bash
 python -m venv .venv
@@ -75,17 +75,17 @@ npm run build
 npm run dev
 ```
 
-Open the local address printed by Vite. **Open sample preview** displays illustrative, clearly labelled UI data. It is not a cloud integration test. For real authenticated local development, copy `dashboard/.env.example` to `.env.local` and fill it using your Terraform outputs. Public Cognito client identifiers are configuration; tokens are never committed.
+I open the local address printed by Vite and select **Open sample preview** to inspect the labelled UI data. For authenticated development against a future deployment, I would copy `dashboard/.env.example` to `.env.local` and fill it from Terraform outputs. I keep tokens out of Git; public Cognito client identifiers are configuration.
 
-The deterministic local experiment creates 3,000 transactions, trains on the oldest 1,800, tunes the threshold on the next 600, and evaluates the newest 600. The recorded local holdout result is **F1 0.9298, precision 0.9138, recall 0.9464, false-positive rate 0.00919**. These are synthetic-data results, not production fraud-detection claims.
+I trained on the oldest 1,800 of 3,000 synthetic transactions, tuned the threshold on the next 600, and evaluated the newest 600. I measured **F1 0.9298, precision 0.9138, recall 0.9464 and false-positive rate 0.00919**, then reproduced those results inside Docker on AWS. These figures describe my synthetic experiment.
 
 ## Deploy deliberately
 
-The primary region is `us-east-1` for service availability and one-region integration. There is no VPC or NAT Gateway in this managed-service lab. Terraform creates Kinesis, private storage, IAM roles, functions, API/authentication, the dashboard edge, monitoring, analytics, a registry, and optionally the ML pipeline and AWS CI/CD.
+I chose `us-east-1` to keep the integrations in one region. I omitted a VPC and NAT Gateway because the design uses managed services. My full Terraform configuration defines Kinesis, private storage, IAM roles, functions, API/authentication, the dashboard edge, monitoring, analytics, a registry and optional ML/CI resources.
 
-Follow [deployment](docs/deployment.md), then [cloud acceptance tests](docs/testing.md). Verify service eligibility and credits before applying. A Terraform validation result is not proof that this account can provision Kinesis or SageMaker.
+I documented my future [deployment sequence](docs/deployment.md) and the [cloud tests still to run](docs/testing.md). I check eligibility, quotas and credits before provisioning; Terraform validation alone did not establish that my account could run Kinesis or SageMaker.
 
-GitHub → CodePipeline → CodeBuild tests → manual deployment review → CodeBuild deployment is implemented in `infra/ci.tf`. Application deployment and ML workflow changes have separate controls from Terraform infrastructure changes and model approval. Details: [CI/CD](docs/ci-cd.md).
+I defined GitHub → CodePipeline → CodeBuild tests → manual deployment review → CodeBuild deployment in `infra/ci.tf`. I kept application delivery, infrastructure changes and model approval as separate controls. My [CI/CD notes](docs/ci-cd.md) distinguish that unrun AWS pipeline from the successful Pages workflow and container builds.
 
 ## Reliability and security that matter
 
@@ -98,7 +98,7 @@ GitHub → CodePipeline → CodeBuild tests → manual deployment review → Cod
 - A candidate must meet six quality/support criteria. It enters the registry as `PendingManualApproval`. Batch inference rejects an unapproved package.
 - Drift-triggered retraining is disabled by default, requires sufficient labelled data and two breaches, and permits at most one attempt per day.
 
-See [operations](docs/monitoring.md), [teardown and cost](docs/cost.md), and [known limits](docs/troubleshooting.md).
+I recorded my [operations approach](docs/monitoring.md), [teardown and cost work](docs/cost.md), and [troubleshooting lessons](docs/troubleshooting.md).
 
 ## Repository map
 
@@ -112,4 +112,4 @@ See [operations](docs/monitoring.md), [teardown and cost](docs/cost.md), and [kn
 | `tests/` | Failure, replay, validation, ML leakage/gate and API-shape tests |
 | `docs/` | Architecture, decisions, runbooks, evidence and interview explanations |
 
-Verified results include the published GitHub Pages preview and an isolated AWS CodeBuild Docker execution, completed ECR scan and bootstrap teardown. Full Kinesis ingestion, the authenticated AWS dashboard, SageMaker execution and the main CodePipeline remain unapplied or unrun. The [evidence guide](docs/screenshots/README.md) identifies each screenshot and execution record.
+I verified the published Pages preview, AWS CodeBuild Docker execution, ECR scan and temporary-infrastructure teardown. I have not run the full Kinesis ingestion path, authenticated AWS dashboard, SageMaker workflow or main CodePipeline. My [evidence guide](docs/screenshots/README.md) identifies each screenshot and execution record.
